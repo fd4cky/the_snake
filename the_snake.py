@@ -52,10 +52,10 @@ class GameObject:
 
     def __init__(
         self,
-        position: tuple[int, int],
-        body_color: tuple[int, int, int],
+        position: tuple[int, int] = (0, 0),
+        body_color: tuple[int, int, int] = (255, 255, 255),
     ):
-        """Инициализирует объект.
+        """Инициализирует объект (по умолчанию (0, 0) и (255, 255, 255)).
 
         Args:
             position (tuple[int, int]): Позиция на поле в пикселях
