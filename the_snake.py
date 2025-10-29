@@ -1,4 +1,4 @@
-from random import choice, randint
+from random import randint
 
 import pygame
 
@@ -52,14 +52,19 @@ class GameObject:
         """Инициализирует объект.
 
         Args:
-            position: Позиция на поле в пикселях (кратна GRID_SIZE).
-            body_color: Цвет отрисовки объекта.
+            position (tuple[int, int]): Позиция на поле в пикселях
+                (кратна GRID_SIZE).
+            body_color (tuple[int, int, int]): Цвет отрисовки объекта.
         """
         self.position = position
         self.body_color = body_color
 
     def draw(self):  # pragma: no cover - графика
-        """Абстрактный метод отрисовки на экране."""
+        """Абстрактный метод отрисовки на экране.
+
+        Raises:
+            NotImplementedError: Метод должен быть переопределён в подклассе.
+        """
         raise NotImplementedError
 
 
@@ -70,7 +75,11 @@ class Snake(GameObject):
     """
 
     def __init__(self):
-        """Создаёт змейку в центре экрана, движущуюся вправо."""
+        """Создаёт змейку в центре экрана, движущуюся вправо.
+
+        Инициализирует длину змейки, список позиций сегментов,
+        направление движения и вспомогательные атрибуты.
+        """
         center = (
             (SCREEN_WIDTH // 2 // GRID_SIZE) * GRID_SIZE,
             (SCREEN_HEIGHT // 2 // GRID_SIZE) * GRID_SIZE,
@@ -83,11 +92,21 @@ class Snake(GameObject):
         self.last: tuple[int, int] | None = None  # последняя ячейка для затирания следа
 
     def get_head_position(self) -> tuple[int, int]:
-        """Возвращает координаты головы змейки."""
+        """Возвращает координаты головы змейки.
+
+        Returns:
+            tuple[int, int]: Координаты головы змейки в пикселях.
+        """
         return self.positions[0]
 
     def update_direction(self) -> None:
-        """Применяет отложенное направление, если оно задано."""
+        """Применяет отложенное направление, если оно задано.
+
+        Обновляет текущее направление движения змейки на следующее, если оно установлено.
+
+        Returns:
+            None: Метод не возвращает значений.
+        """
         if self.next_direction:
             self.direction = self.next_direction
             self.next_direction = None
@@ -97,6 +116,9 @@ class Snake(GameObject):
 
         Добавляет новую голову и при необходимости удаляет хвост.
         Реализует «сквозные» стены (тор).
+
+        Returns:
+            None: Метод не возвращает значений.
         """
         x, y = self.get_head_position()
         dx, dy = self.direction
@@ -105,7 +127,8 @@ class Snake(GameObject):
             (y + dy * GRID_SIZE) % SCREEN_HEIGHT,
         )
 
-        # Самопересечение — сбросим игру (обработаем в main повторно для единообразия)
+        # Самопересечение — сбросим игру
+        # (обработаем в main повторно для единообразия)
         self.positions.insert(0, new_head)
 
         if len(self.positions) > self.length:
@@ -116,7 +139,13 @@ class Snake(GameObject):
         self.position = new_head
 
     def reset(self) -> None:
-        """Возвращает змейку в стартовое состояние."""
+        """Возвращает змейку в стартовое состояние.
+
+        Сбрасывает длину, позицию, направление и вспомогательные атрибуты змейки.
+
+        Returns:
+            None: Метод не возвращает значений.
+        """
         center = (
             (SCREEN_WIDTH // 2 // GRID_SIZE) * GRID_SIZE,
             (SCREEN_HEIGHT // 2 // GRID_SIZE) * GRID_SIZE,
@@ -129,7 +158,14 @@ class Snake(GameObject):
         self.position = center
 
     def draw(self):  # pragma: no cover - графика
-        """Отрисовывает все сегменты и затирает след."""
+        """Отрисовывает все сегменты и затирает след.
+
+        Отрисовывает тело и голову змейки с границами,
+        а также очищает последнюю ячейку хвоста.
+
+        Returns:
+            None: Метод не возвращает значений.
+        """
         # Тело (кроме головы)
         for position in self.positions[1:]:
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
@@ -151,27 +187,51 @@ class Apple(GameObject):
     """Яблоко: статический объект, появляющийся в случайной клетке."""
 
     def __init__(self):
-        """Создаёт яблоко и задаёт случайную позицию."""
+        """Создаёт яблоко и задаёт случайную позицию.
+
+        Инициализирует объект с цветом яблока и
+        случайной позицией на поле.
+        """
         super().__init__((0, 0), APPLE_COLOR)
         self.randomize_position()
 
     def randomize_position(self) -> None:
-        """Ставит яблоко в случайную клетку поля."""
+        """Ставит яблоко в случайную клетку поля.
+
+        Обновляет позицию яблока случайным образом в пределах игрового поля.
+
+        Returns:
+            None: Метод не возвращает значений.
+        """
         self.position = (
             randint(0, GRID_WIDTH - 1) * GRID_SIZE,
             randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
         )
 
     def draw(self):  # pragma: no cover - графика
-        """Отрисовывает яблоко как закрашенную клетку."""
+        """Отрисовывает яблоко как закрашенную клетку.
+
+        Рисует яблоко с заданным цветом и границей на игровом экране.
+
+        Returns:
+            None: Метод не возвращает значений.
+        """
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
 
 def handle_keys(game_object: Snake) -> None:
     """Обрабатывает нажатия клавиш и ставит следующее направление.
 
     Нельзя мгновенно развернуться на 180°.
+
+    Args:
+        game_object (Snake): Объект змейки, для которого обновляется
+            направление движения.
+
+    Returns:
+        None: Функция не возвращает значений.
     """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -189,7 +249,15 @@ def handle_keys(game_object: Snake) -> None:
 
 
 def main():
-    """Точка входа: инициализация объектов и основной игровой цикл."""
+    """Точка входа: инициализация объектов и основной игровой цикл.
+
+    Инициализирует PyGame, создаёт объекты змейки и яблока,
+    запускает игровой цикл с обработкой событий,
+    обновлением состояния и отрисовкой.
+
+    Returns:
+        None: Функция не возвращает значений.
+    """
     # Инициализация PyGame:
     pygame.init()
 
