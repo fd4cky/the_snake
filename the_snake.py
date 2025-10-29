@@ -1,5 +1,4 @@
 from random import randint
-
 import pygame
 
 # Константы для размеров поля и сетки:
@@ -30,9 +29,7 @@ SNAKE_COLOR = (0, 255, 0)
 SPEED = 20
 
 # Настройка игрового окна:
-screen = pygame.display.set_mode(
-    (SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32
-)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
 # Заголовок окна игрового поля:
 pygame.display.set_caption('Змейка')
@@ -50,11 +47,7 @@ class GameObject:
         body_color (tuple[int, int, int]): Цвет объекта в формате RGB.
     """
 
-    def __init__(
-        self,
-        position: tuple[int, int] = (0, 0),
-        body_color: tuple[int, int, int] = (255, 255, 255),
-    ):
+    def __init__(self, position=(0, 0), body_color=(255, 255, 255)):
         """Инициализирует объект (по умолчанию (0, 0) и (255, 255, 255)).
 
         Args:
@@ -92,13 +85,13 @@ class Snake(GameObject):
         )
         super().__init__(position=center, body_color=SNAKE_COLOR)
         self.length = 1
-        self.positions: list[tuple[int, int]] = [center]
+        self.positions = [center]
         self.direction = RIGHT
-        self.next_direction: tuple[int, int] | None = None
+        self.next_direction = None
         # последняя ячейка для затирания следа
-        self.last: tuple[int, int] | None = None
+        self.last = None
 
-    def get_head_position(self) -> tuple[int, int]:
+    def get_head_position(self):
         """Возвращает координаты головы змейки.
 
         Returns:
@@ -106,7 +99,7 @@ class Snake(GameObject):
         """
         return self.positions[0]
 
-    def update_direction(self) -> None:
+    def update_direction(self):
         """Применяет отложенное направление, если оно задано.
 
         Обновляет текущее направление движения змейки
@@ -119,7 +112,7 @@ class Snake(GameObject):
             self.direction = self.next_direction
             self.next_direction = None
 
-    def move(self) -> None:
+    def move(self):
         """Сдвигает змейку на одну клетку в текущем направлении.
 
         Добавляет новую голову и при необходимости удаляет хвост.
@@ -146,7 +139,7 @@ class Snake(GameObject):
 
         self.position = new_head
 
-    def reset(self) -> None:
+    def reset(self):
         """Возвращает змейку в стартовое состояние.
 
         Сбрасывает основные параметры и вспомогательные атрибуты змейки.
@@ -204,7 +197,7 @@ class Apple(GameObject):
         super().__init__((0, 0), APPLE_COLOR)
         self.randomize_position()
 
-    def randomize_position(self) -> None:
+    def randomize_position(self):
         """Ставит яблоко в случайную клетку поля.
 
         Обновляет позицию яблока случайным образом в пределах игрового поля.
@@ -230,7 +223,7 @@ class Apple(GameObject):
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def handle_keys(game_object: Snake) -> None:
+def handle_keys(game_object):
     """Обрабатывает нажатия клавиш и ставит следующее направление.
 
     Нельзя мгновенно развернуться на 180°.
