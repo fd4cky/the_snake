@@ -30,7 +30,9 @@ SNAKE_COLOR = (0, 255, 0)
 SPEED = 20
 
 # Настройка игрового окна:
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+screen = pygame.display.set_mode(
+    (SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32
+)
 
 # Заголовок окна игрового поля:
 pygame.display.set_caption('Змейка')
@@ -48,7 +50,11 @@ class GameObject:
         body_color (tuple[int, int, int]): Цвет объекта в формате RGB.
     """
 
-    def __init__(self, position: tuple[int, int], body_color: tuple[int, int, int]):
+    def __init__(
+        self,
+        position: tuple[int, int],
+        body_color: tuple[int, int, int],
+    ):
         """Инициализирует объект.
 
         Args:
@@ -89,7 +95,8 @@ class Snake(GameObject):
         self.positions: list[tuple[int, int]] = [center]
         self.direction = RIGHT
         self.next_direction: tuple[int, int] | None = None
-        self.last: tuple[int, int] | None = None  # последняя ячейка для затирания следа
+        # последняя ячейка для затирания следа
+        self.last: tuple[int, int] | None = None
 
     def get_head_position(self) -> tuple[int, int]:
         """Возвращает координаты головы змейки.
@@ -102,7 +109,8 @@ class Snake(GameObject):
     def update_direction(self) -> None:
         """Применяет отложенное направление, если оно задано.
 
-        Обновляет текущее направление движения змейки на следующее, если оно установлено.
+        Обновляет текущее направление движения змейки
+        на следующее, если оно установлено.
 
         Returns:
             None: Метод не возвращает значений.
