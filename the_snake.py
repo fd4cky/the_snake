@@ -1,5 +1,13 @@
+"""
+Classic Snake game implemented with PyGame.
+
+Contains classes for Snake, Apple, base GameObject,
+event handling and the main game loop.
+"""
+
 from random import randint
 import pygame
+
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -38,7 +46,6 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-# Тут опишите все классы игры.
 class GameObject:
     """Базовый игровой объект с позицией и цветом тела.
 
